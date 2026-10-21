@@ -1,0 +1,27 @@
+plugins {
+	id 'java'
+}
+
+group = 'dev.handy.mods'
+version = '1.0.0'
+
+repositories {
+	mavenCentral()
+	maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+	// Compile against the stable 1.20.4 API. The plugin only uses Bukkit APIs
+	// present in this baseline; the 26.3 selection event is registered reflectively.
+	compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 17
+	options.encoding = 'UTF-8'
+}
+
+processResources {
+	inputs.property 'version', project.version
+	filesMatching('plugin.yml') { expand(version: project.version) }
+}

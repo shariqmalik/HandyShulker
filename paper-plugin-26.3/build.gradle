@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'io.papermc.paperweight.userdev' version '2.0.0-beta.24'
+}
+
+group = 'dev.handy.mods'
+version = '1.0.0'
+
+dependencies {
+    paperweight.paperDevBundle('26.3.build.+')
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java', '../paper-plugin/src/main/java']
+        resources.srcDirs = ['src/main/resources']
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('plugin.yml') { expand(version: project.version) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.named('jar') {
+    archiveBaseName = 'handy-shulker-paper'
+    archiveClassifier = '26.3'
+}
