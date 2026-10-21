@@ -23,8 +23,26 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Upload build artifacts
+      - name: Build legacy Paper plugin
+        run: ./gradlew -p paper-plugin build
+
+      - name: Build Paper 26.3 plugin
+        run: ./gradlew -p paper-plugin-26.3 build
+
+      - name: Upload Fabric mod artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: mod-jar
           path: build/libs/*.jar
+
+      - name: Upload legacy Paper plugin artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: handy-shulker-paper-legacy
+          path: paper-plugin/build/libs/*.jar
+
+      - name: Upload Paper 26.3 plugin artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: handy-shulker-paper-26.3
+          path: paper-plugin-26.3/build/libs/*.jar

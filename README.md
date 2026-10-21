@@ -43,6 +43,14 @@ Build the legacy Paper plugin (requires Java 17):
 
 The JARs are written to each module's `build/libs/` directory. See the module READMEs for details and limitations.
 
+## Releases and pull requests
+
+Pull requests and branch pushes build both Paper plugins (as well as the Fabric mod) in GitHub Actions. The generated JARs are available as workflow artifacts.
+
+To publish a Paper release, set the `version` in both Paper module `build.gradle` files to the same release version, commit that change, and push a tag named `paper-v<version>` (for example, `paper-v1.0.0`). The workflow builds both plugins and attaches their JARs to a GitHub Release. The tag must match both module versions.
+
+GitHub Releases are the supported download channel for these Paper plugins. Modrinth can also host Minecraft plugins, but these Paper builds should be a separate plugin project from the upstream Fabric client mod. Modrinth's rules call for separate projects when files provide different functionality. See [Modrinth's project rules](https://modrinth.com/legal/rules/).
+
 The original Fabric mod can be built separately with `./gradlew build` and its normal Fabric toolchain.
 
 ## Contributing
