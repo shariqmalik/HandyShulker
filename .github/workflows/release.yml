@@ -50,3 +50,39 @@ jobs:
           name: Handy Shulker Paper ${{ github.ref_name }}
           generate_release_notes: true
           files: release-files/*.jar
+
+      - name: Publish Paper 26.3 plugin to Modrinth
+        if: vars.MODRINTH_PAPER_PROJECT_ID != ''
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT_ID: ${{ vars.MODRINTH_PAPER_PROJECT_ID }}
+        run: |
+          if [ -z "$MODRINTH_TOKEN" ]; then
+            echo "::error::Set the MODRINTH_TOKEN repository secret to enable Modrinth publishing."
+            exit 1
+          fi
+
+          VERSION="${GITHUB_REF_NAME#paper-v}"
+          FILE="release-files/HandyShulker-Paper-${GITHUB_REF_NAME}-26.3.jar"
+          METADATA=$(jq -n \
+            --arg project_id "$MODRINTH_PROJECT_ID" \
+            --arg version "$VERSION" \
+            '{name: ("Handy Shulker Paper 26.3 " + $version),
+              version_number: $version,
+              changelog: "Paper 26.3 server plugin for the unchanged official Handy Shulker Fabric client. Original client mod by Reza: https://modrinth.com/mod/handy-shulker. Source: https://github.com/shariqmalik/HandyShulker.",
+              dependencies: [],
+              game_versions: ["26.3"],
+              version_type: "release",
+              loaders: ["paper"],
+              featured: false,
+              project_id: $project_id,
+              file_parts: ["file"],
+              primary_file: "file",
+              environment: "server_only"}')
+
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: $MODRINTH_TOKEN" \
+            --form "data=$METADATA;type=application/json" \
+            --form "file=@$FILE;type=application/java-archive" \
+            https://api.modrinth.com/v2/version

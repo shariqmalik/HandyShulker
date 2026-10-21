@@ -49,7 +49,7 @@ Pull requests and branch pushes build both Paper plugins (as well as the Fabric 
 
 To publish a Paper release, set the `version` in both Paper module `build.gradle` files to the same release version, commit that change, and push a tag named `paper-v<version>` (for example, `paper-v1.0.0`). The workflow builds both plugins and attaches their JARs to a GitHub Release. The tag must match both module versions.
 
-GitHub Releases are the supported download channel for these Paper plugins. Modrinth can also host Minecraft plugins, but these Paper builds should be a separate plugin project from the upstream Fabric client mod. Modrinth's rules call for separate projects when files provide different functionality. See [Modrinth's project rules](https://modrinth.com/legal/rules/).
+GitHub Releases contain both plugin builds. The release workflow can also publish the Paper 26.3 JAR to a separate Modrinth plugin project once `MODRINTH_PAPER_PROJECT_ID` and `MODRINTH_TOKEN` are configured. See the [Modrinth listing draft](docs/MODRINTH_PROJECT.md). Modrinth's rules require separate projects for files with different functionality; the Paper plugin is separate from the upstream Fabric client mod. See [Modrinth's project rules](https://modrinth.com/legal/rules/).
 
 The original Fabric mod can be built separately with `./gradlew build` and its normal Fabric toolchain.
 
