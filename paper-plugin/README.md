@@ -1,6 +1,6 @@
 # HandyShulker Paper plugin: older servers
 
-This Java 17 build is for Paper 1.18.2 and newer. It handles shulker and ender chest item insert/extract clicks server-side. Since the legacy API does not expose the mod's selection packet, extraction defaults to the first occupied slot.
+This Java 17 build is for Paper 1.18.2 and newer. It handles shulker and ender chest item insert/extract clicks server-side for clients whose reported brand includes `Fabric`. Vanilla-branded clients keep normal inventory behavior. Paper exposes the client brand rather than its installed mod list, so this gate cannot distinguish Handy Shulker from other Fabric clients. Since the legacy API does not expose the mod's selection packet, extraction defaults to the first occupied slot.
 
 Build from the repository root:
 

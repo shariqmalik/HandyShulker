@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public final class ShulkerInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (!isFabricClient(player)) return;
         if (event.getClickedInventory() == null) return;
         ItemStack cursor = event.getCursor();
         ItemStack clicked = event.getCurrentItem();
@@ -134,6 +136,11 @@ public final class ShulkerInventoryListener implements Listener {
     private static boolean isContainer(ItemStack item) {
         if (item == null) return false;
         return item.getType() == Material.ENDER_CHEST || item.getType().name().endsWith("_SHULKER_BOX");
+    }
+
+    static boolean isFabricClient(Player player) {
+        String brand = player.getClientBrandName();
+        return brand != null && brand.toLowerCase(Locale.ROOT).contains("fabric");
     }
 
     private static boolean cannotInsertInto(ItemStack container, ItemStack incoming) {

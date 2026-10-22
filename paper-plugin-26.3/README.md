@@ -2,7 +2,7 @@
 
 This build sends the exact `handyshulker:sync_ender_chest` payload expected by the official client. It uses Minecraft 26.3's registry-aware `ItemStack` stream codec, so the client receives normal network item stacks, including their data components. No client changes are needed. It also observes the vanilla bundle-selection packet the client reuses for scroll selection, so extraction follows the item highlighted in the tooltip.
 
-The plugin syncs the ender chest snapshot on join, after insert/extract interactions through the mod, and after inventory screens close (including a placed ender chest). It also supports shulker box interactions.
+The plugin syncs the ender chest snapshot on join, after insert/extract interactions through the mod, and after inventory screens close (including a placed ender chest). It also supports shulker box interactions. These behaviors are enabled only for clients whose reported brand includes `Fabric`; vanilla-branded clients retain normal inventory behavior. Paper reports the client brand, not its installed mod list, so other Fabric clients cannot be distinguished from Handy Shulker clients.
 
 Build from the repository root:
 

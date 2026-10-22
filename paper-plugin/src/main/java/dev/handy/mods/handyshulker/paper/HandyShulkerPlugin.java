@@ -40,6 +40,7 @@ public final class HandyShulkerPlugin extends JavaPlugin {
     }
 
     void syncEnderChest(org.bukkit.entity.Player player) {
+        if (!ShulkerInventoryListener.isFabricClient(player)) return;
         enderChestSync.sync(player);
     }
 

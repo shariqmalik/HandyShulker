@@ -25,7 +25,9 @@ Use a server version compatible with the Minecraft client. A plugin that loads o
 1. Install the official [Handy Shulker Fabric mod](https://modrinth.com/mod/handy-shulker) and its required Fabric dependencies on each client.
 2. Download or build the plugin variant matching your Paper server from the table above.
 3. Put the plugin JAR in the server's `plugins` folder and restart the server.
-4. Players continue to use the official client mod; no client-side fork or configuration change is required.
+4. Players continue to use the official client mod; no client-side fork or configuration change is required. The plugin only handles these inventory clicks for clients reporting a Fabric brand, so vanilla clients keep normal inventory behavior.
+
+Paper exposes the client brand, not its installed mod list. This prevents vanilla clients from receiving Handy Shulker behavior, but cannot distinguish the Handy Shulker mod from another Fabric client.
 
 ## Build
 
