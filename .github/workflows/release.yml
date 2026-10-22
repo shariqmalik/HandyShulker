@@ -31,6 +31,31 @@ jobs:
             echo "::error::Release tag version ($TAG_VERSION) must match both plugin versions ($LEGACY_VERSION and $MODERN_VERSION)."
             exit 1
           fi
+          echo "VERSION=$TAG_VERSION" >> "$GITHUB_ENV"
+
+          if [[ "$TAG_VERSION" =~ -(alpha|beta|rc) ]]; then
+            echo "IS_PRERELEASE=true" >> "$GITHUB_ENV"
+            if [[ "$TAG_VERSION" =~ -alpha ]]; then
+              echo "MODRINTH_VERSION_TYPE=alpha" >> "$GITHUB_ENV"
+            else
+              echo "MODRINTH_VERSION_TYPE=beta" >> "$GITHUB_ENV"
+            fi
+          else
+            echo "IS_PRERELEASE=false" >> "$GITHUB_ENV"
+            echo "MODRINTH_VERSION_TYPE=release" >> "$GITHUB_ENV"
+          fi
+
+      - name: Extract Paper changelog
+        run: |
+          awk -v version="$VERSION" '
+            index($0, "## [" version "]") == 1 { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' paper-plugin/CHANGELOG.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "::error::No Paper changelog entry found for $VERSION."
+            exit 1
+          fi
 
       - name: Build legacy Paper plugin
         run: ./gradlew -p paper-plugin build
@@ -47,8 +72,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
-          name: Handy Shulker Paper ${{ github.ref_name }}
-          generate_release_notes: true
+          name: Handy Shulker Paper v${{ env.VERSION }}
+          body_path: release-notes.md
+          prerelease: ${{ env.IS_PRERELEASE == 'true' }}
           files: release-files/*.jar
 
       - name: Publish Paper 26.3 plugin to Modrinth
@@ -62,17 +88,17 @@ jobs:
             exit 1
           fi
 
-          VERSION="${GITHUB_REF_NAME#paper-v}"
           FILE="release-files/HandyShulker-Paper-${GITHUB_REF_NAME}-26.3.jar"
-          METADATA=$(jq -n \
+          METADATA=$(jq -n --rawfile changelog release-notes.md \
             --arg project_id "$MODRINTH_PROJECT_ID" \
             --arg version "$VERSION" \
+            --arg version_type "$MODRINTH_VERSION_TYPE" \
             '{name: ("Handy Shulker Paper 26.3 " + $version),
               version_number: $version,
-              changelog: "Paper 26.3 server plugin for the unchanged official Handy Shulker Fabric client. Original client mod by Reza: https://modrinth.com/mod/handy-shulker. Source: https://github.com/shariqmalik/HandyShulker.",
+              changelog: $changelog,
               dependencies: [],
               game_versions: ["26.3"],
-              version_type: "release",
+              version_type: $version_type,
               loaders: ["paper"],
               featured: false,
               project_id: $project_id,

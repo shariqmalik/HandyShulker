@@ -49,7 +49,7 @@ The JARs are written to each module's `build/libs/` directory. See the module RE
 
 Pull requests and branch pushes build both Paper plugins (as well as the Fabric mod) in GitHub Actions. The generated JARs are available as workflow artifacts.
 
-To publish a Paper release, set the `version` in both Paper module `build.gradle` files to the same release version, commit that change, and push a tag named `paper-v<version>` (for example, `paper-v1.0.0`). The workflow builds both plugins and attaches their JARs to a GitHub Release. The tag must match both module versions.
+To publish a Paper release, set the `version` in both Paper module `build.gradle` files to the same release version, add its notes to [the Paper changelog](paper-plugin/CHANGELOG.md), commit those changes, and push a matching `paper-v<version>` tag. Beta tags such as `paper-v1.0.0-beta.1` create prereleases; stable tags such as `paper-v1.0.0` create regular releases. The workflow builds both plugins and attaches their JARs to the GitHub Release. The tag must match both module versions.
 
 GitHub Releases contain both plugin builds. The release workflow can also publish the Paper 26.3 JAR to a separate Modrinth plugin project once `MODRINTH_PAPER_PROJECT_ID` and `MODRINTH_TOKEN` are configured. See the [Modrinth listing draft](docs/MODRINTH_PROJECT.md). Modrinth's rules require separate projects for files with different functionality; the Paper plugin is separate from the upstream Fabric client mod. See [Modrinth's project rules](https://modrinth.com/legal/rules/).
 
