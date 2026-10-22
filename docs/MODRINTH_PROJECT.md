@@ -22,7 +22,7 @@ Handy Shulker Paper lets players use the **official Handy Shulker Fabric client 
 
 Players need the official Handy Shulker Fabric mod on their clients. This plugin is server-side and does not replace or modify that client mod. Requires Paper 26.3 and Java 25.
 
-The plugin enables its inventory behavior for clients that report a Fabric brand. Paper does not expose the installed client mod list, so this check blocks vanilla-branded clients but cannot verify Handy Shulker specifically among Fabric clients.
+The Paper 26.3 plugin verifies clients from Handy Shulker's scroll-selection packet when the packet targets a shulker box or ender chest. Players should scroll over one of those items once before using click-to-insert. The separate legacy Paper build uses the `handyshulker.use` permission because its API-only implementation cannot inspect this packet.
 
 Credits: the original Handy Shulker Fabric mod and logo are by Reza: https://modrinth.com/mod/handy-shulker. This is an independent Paper compatibility plugin maintained at https://github.com/shariqmalik/HandyShulker.
 

@@ -62,6 +62,10 @@ public final class Paper263PayloadSender implements Listener {
                         // Store before forwarding: Paper queues packet handling to the server thread,
                         // while scheduler work may run after a following click packet.
                         inventoryListener.rememberSelection(playerId, slot, selected);
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            Player online = Bukkit.getPlayer(playerId);
+                            if (online != null) inventoryListener.verifyClientSelection(online, slot);
+                        });
                     }
                     context.fireChannelRead(message);
                 }

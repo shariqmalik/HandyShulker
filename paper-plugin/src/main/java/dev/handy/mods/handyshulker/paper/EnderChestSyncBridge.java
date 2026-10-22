@@ -30,6 +30,7 @@ final class EnderChestSyncBridge {
         }
         sender = loadedSender;
         sendMethod = loadedMethod;
+        inventoryListener.setExactClientDetection(sender != null);
     }
 
     void sync(Player player) {

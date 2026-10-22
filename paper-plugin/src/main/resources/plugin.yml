@@ -4,3 +4,7 @@ main: dev.handy.mods.handyshulker.paper.HandyShulkerPlugin
 api-version: '1.18'
 description: Paper server support for the unchanged Handy Shulker Fabric client.
 author: dfox288
+permissions:
+  handyshulker.use:
+    description: Allow Handy Shulker interactions on legacy Paper builds.
+    default: false

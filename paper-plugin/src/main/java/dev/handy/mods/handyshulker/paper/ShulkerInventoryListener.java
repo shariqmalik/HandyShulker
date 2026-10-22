@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
@@ -24,6 +24,8 @@ import java.util.UUID;
 public final class ShulkerInventoryListener implements Listener {
     private final HandyShulkerPlugin plugin;
     private final Map<SelectionKey, Integer> selections = new ConcurrentHashMap<>();
+    private final Set<UUID> verifiedClients = ConcurrentHashMap.newKeySet();
+    private volatile boolean exactClientDetection;
 
     ShulkerInventoryListener(HandyShulkerPlugin plugin) {
         this.plugin = plugin;
@@ -32,7 +34,7 @@ public final class ShulkerInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        if (!isFabricClient(player)) return;
+        if (!isSupportedClient(player)) return;
         if (event.getClickedInventory() == null) return;
         ItemStack cursor = event.getCursor();
         ItemStack clicked = event.getCurrentItem();
@@ -122,6 +124,25 @@ public final class ShulkerInventoryListener implements Listener {
 
     public void clearSelections(UUID playerId) {
         selections.keySet().removeIf(key -> key.player().equals(playerId));
+        verifiedClients.remove(playerId);
+    }
+
+    void setExactClientDetection(boolean enabled) {
+        exactClientDetection = enabled;
+    }
+
+    /** Verify the 26.3 mod-specific scroll packet against its target inventory slot on the server thread. */
+    public void verifyClientSelection(Player player, int rawSlot) {
+        if (!exactClientDetection || rawSlot < 0 || rawSlot >= player.getOpenInventory().countSlots()) return;
+        if (isContainer(player.getOpenInventory().getItem(rawSlot))) {
+            verifiedClients.add(player.getUniqueId());
+            plugin.syncEnderChest(player);
+        }
+    }
+
+    boolean isSupportedClient(Player player) {
+        if (exactClientDetection) return verifiedClients.contains(player.getUniqueId());
+        return player.hasPermission("handyshulker.use");
     }
 
     private static Object invoke(Event event, String method) throws ReflectiveOperationException {
@@ -136,11 +157,6 @@ public final class ShulkerInventoryListener implements Listener {
     private static boolean isContainer(ItemStack item) {
         if (item == null) return false;
         return item.getType() == Material.ENDER_CHEST || item.getType().name().endsWith("_SHULKER_BOX");
-    }
-
-    static boolean isFabricClient(Player player) {
-        String brand = player.getClientBrandName();
-        return brand != null && brand.toLowerCase(Locale.ROOT).contains("fabric");
     }
 
     private static boolean cannotInsertInto(ItemStack container, ItemStack incoming) {
